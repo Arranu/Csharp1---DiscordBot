@@ -1,0 +1,4 @@
+﻿{
+  "token": "token",
+  "prefix": "!"
+} //placed here to avoid exposing in the main code
