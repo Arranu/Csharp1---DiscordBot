@@ -1,4 +1,5 @@
-﻿using DSharpPlus.CommandsNext;
+﻿using DiscordBot.misc;
+using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using System;
@@ -32,7 +33,26 @@ namespace DiscordBot.commands
                 .WithDescription($"Executed by {context.User.Username}")
                 .WithColor(DiscordColor.Blurple));
 
-            await context.Channel.SendMessageAsync(msg);
+            await context.Channel.SendMessageAsync( msg);
+        }
+        [Command("cardgame")]
+        public async Task CardGame(CommandContext context)
+        {
+            var userCard = new CardSys();
+            var userCardEmbed = new DiscordEmbedBuilder  //alternative way of declaring embed config
+            {
+                Title = $"Your card is {userCard.SelectedCard}",
+                Color = DiscordColor.DarkGreen
+
+            };
+            await context.Channel.SendMessageAsync(embed: userCardEmbed);
+            var botCard = new CardSys();
+            var botCardEmbed = new DiscordEmbedBuilder
+            {
+                Title = $"The Bot drew {botCard.SelectedCard}",
+                Color = DiscordColor.Orange
+            };
+            await context.Channel.SendMessageAsync(embed: botCardEmbed);
         }
     }
 }
