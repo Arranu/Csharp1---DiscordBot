@@ -29,7 +29,7 @@ namespace DiscordBot
             Client = new DiscordClient(discordConfig);
             Client.UseInteractivity(new DSharpPlus.Interactivity.InteractivityConfiguration()
             {
-                Timeout =TimeSpan.FromMinutes(5)
+                Timeout =TimeSpan.FromMinutes(2) //commands that interact with read will timeout after 2 mins by default
             });
             Client.Ready += Client_Ready;
 
@@ -41,7 +41,7 @@ namespace DiscordBot
                 EnableDefaultHelp = false,
             };
             Commands = Client.UseCommandsNext(commandsConfig);
-            Commands.RegisterCommands<Basic>();
+            Commands.RegisterCommands<TestCommands>();
 
             await Client.ConnectAsync();
             await Task.Delay(-1); //Delay-1 keeps the bot running indefinetly 

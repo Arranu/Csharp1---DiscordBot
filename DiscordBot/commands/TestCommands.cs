@@ -2,6 +2,7 @@
 using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
+using DSharpPlus.Interactivity.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace DiscordBot.commands
 {
-    public class TestCommands: BaseCommandModule // inherits base class structure
+    public class TestCommands : BaseCommandModule // inherits base class structure
     {
         [Command("test")]
         public async Task Speak(CommandContext context)// CommandContext accesses discord text
@@ -19,7 +20,7 @@ namespace DiscordBot.commands
             await context.Channel.SendMessageAsync($"Hello {context.User.Username}");
         }
         [Command("add")]
-        public async Task Add(CommandContext context, int num1,int num2 )
+        public async Task Add(CommandContext context, int num1, int num2)
         {
             int result = num1 + num2;
             await context.Channel.SendMessageAsync(result.ToString());
@@ -33,7 +34,7 @@ namespace DiscordBot.commands
                 .WithDescription($"Executed by {context.User.Username}")
                 .WithColor(DiscordColor.Blurple));
 
-            await context.Channel.SendMessageAsync( msg);
+            await context.Channel.SendMessageAsync(msg);
         }
         [Command("cardgame")]
         public async Task CardGame(CommandContext context)
@@ -54,5 +55,23 @@ namespace DiscordBot.commands
             };
             await context.Channel.SendMessageAsync(embed: botCardEmbed);
         }
+        [Command("test2")]
+        public async Task Respond(CommandContext context)
+        {
+            var interact = Program.Client.GetInteractivity(); //always use program.client unless you want it to read a specific channel
+
+            var msgRetrieve = await interact.WaitForMessageAsync(msg => msg.Content == "Hello");
+            if (msgRetrieve.Result.Content == "Hello")
+            {
+                await context.Channel.SendMessageAsync($"{context.User.Username} said Hello");
+            }
+        }
+        [Command("poll")]
+        public async Task TestCommand(CommandContext context)
+        {
+            var interact = Program.Client.GetInteractivity();
+        }
+
     }
 }
+

@@ -145,7 +145,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="commands\Basic.cs" />
     <Compile Include="commands\TestCommands.cs" />
     <Compile Include="config\JSONReader.cs" />
     <Compile Include="misc\CardSys.cs" />
