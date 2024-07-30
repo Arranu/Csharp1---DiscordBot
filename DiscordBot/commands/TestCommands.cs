@@ -67,11 +67,61 @@ namespace DiscordBot.commands
             }
         }
         [Command("poll")]
-        public async Task TestCommand(CommandContext context)
+        public async Task Poll(CommandContext context, string option1, string option2, string option3, string option4, [RemainingText] string title)
         {
-            var interact = Program.Client.GetInteractivity();
-        }
 
+            var interact = Program.Client.GetInteractivity();
+            var timeout = TimeSpan.FromSeconds(10);
+            DiscordEmoji[] emojiList = { DiscordEmoji.FromName(Program.Client, ":one:"),
+                                        DiscordEmoji.FromName(Program.Client, ":two:"),
+                                        DiscordEmoji.FromName(Program.Client, ":three:"),
+                                        DiscordEmoji.FromName(Program.Client, ":four:")
+            };
+
+            
+
+            string[] options = { option1,
+                                 option2,
+                                 option3,
+                                 option4 };
+
+            var optionsDescription = string.Join("\n", emojiList.Select((emoji, index) => $"{emoji} | {options[index]}"));
+
+
+            var pollMsg = new DiscordEmbedBuilder
+            {
+                Color = DiscordColor.Gold,
+                Title = title,
+                Description = optionsDescription,
+            };
+
+            var sentPoll = await context.Channel.SendMessageAsync(embed: pollMsg);
+            foreach (var emoji in emojiList)
+            
+                {
+                    await sentPoll.CreateReactionAsync(emoji);
+                }
+                var finalTotal = await interact.CollectReactionsAsync(sentPoll, timeout);
+
+            int[] counts = new int[emojiList.Length];
+
+            foreach (var emoji in finalTotal)
+            {
+                for (int i = 0; i < emojiList.Length; i++)
+                {
+                    if (emoji.Emoji == emojiList[i])
+                    {
+                        counts[i]++;
+                        break;
+                    }
+                }
+            }
+            for (int i = 0; i < emojiList.Length; i++)
+            {
+                await context.Channel.SendMessageAsync($"{emojiList[i]}: {counts[i]} votes");
+            }
+
+        }
     }
 }
 
