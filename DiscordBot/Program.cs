@@ -2,15 +2,17 @@
 using DiscordBot.config;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.Interactivity.Extensions;
+using System;
 using System.Threading.Tasks;
 
 namespace DiscordBot
 {
-    internal class Program
+    public sealed class Program  // sealed = cannot be extended/inherited 
         
     {
-        private static DiscordClient Client { get; set; }
-        private static CommandsNextExtension Commands { get; set; }
+        public static DiscordClient Client { get; set; }
+        public static CommandsNextExtension Commands { get; set; }
         static async Task Main(string[] args)
         { 
             var jsonReader = new JSONReader();
@@ -25,7 +27,10 @@ namespace DiscordBot
             };
 
             Client = new DiscordClient(discordConfig);
-
+            Client.UseInteractivity(new DSharpPlus.Interactivity.InteractivityConfiguration()
+            {
+                Timeout =TimeSpan.FromMinutes(5)
+            });
             Client.Ready += Client_Ready;
 
             var commandsConfig = new CommandsNextConfiguration()
@@ -36,7 +41,7 @@ namespace DiscordBot
                 EnableDefaultHelp = false,
             };
             Commands = Client.UseCommandsNext(commandsConfig);
-            Commands.RegisterCommands<TestCommands>();
+            Commands.RegisterCommands<Basic>();
 
             await Client.ConnectAsync();
             await Task.Delay(-1); //Delay-1 keeps the bot running indefinetly 
