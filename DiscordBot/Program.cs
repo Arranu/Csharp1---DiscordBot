@@ -2,6 +2,7 @@
 using DiscordBot.config;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
 using System;
 using System.Threading.Tasks;
@@ -31,11 +32,15 @@ namespace DiscordBot
             {
                 Timeout =TimeSpan.FromMinutes(2) //commands that interact with read will timeout after 2 mins by default
             });
-            Client.Ready += Client_Ready;
+
+
+            Client.Ready += Client_Ready; //client_ready is added to client.ready class as a usable function.
+            Client.MessageCreated += Client_MessageCreated;
+            
 
             var commandsConfig = new CommandsNextConfiguration()
             {
-                StringPrefixes = new string[] { jsonReader.prefix},
+                StringPrefixes = new string[] {jsonReader.prefix},
                 EnableMentionPrefix = true,
                 EnableDms = true,
                 EnableDefaultHelp = false,
@@ -46,7 +51,14 @@ namespace DiscordBot
             await Client.ConnectAsync();
             await Task.Delay(-1); //Delay-1 keeps the bot running indefinetly 
         }
-        private static Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs args)
+
+
+        private static async Task Client_MessageCreated(DiscordClient sender, DSharpPlus.EventArgs.MessageCreateEventArgs e)
+        {
+            await e.Message.CreateReactionAsync(DiscordEmoji.FromName(Program.Client, ":robot:"));
+        }
+
+        private static Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs e)
         {
             return Task.CompletedTask; // resets the bot after a task has completed, making the client ready to take on a new task
         }
