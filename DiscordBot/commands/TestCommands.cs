@@ -67,6 +67,7 @@ namespace DiscordBot.commands
             }
         }
         [Command("poll")]
+        [Cooldown(5,100,CooldownBucketType.Guild)] // after command is fired 5 times, cooldown of 100 seconds applied to all channels on the server (guild)
         public async Task Poll(CommandContext context, string option1, string option2, string option3, string option4, [RemainingText] string title)
         {
 

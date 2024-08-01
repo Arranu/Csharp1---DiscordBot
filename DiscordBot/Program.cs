@@ -2,8 +2,11 @@
 using DiscordBot.config;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
+using DSharpPlus.CommandsNext.Attributes;
+using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
+using DSharpPlus.SlashCommands;
 using System;
 using System.Threading.Tasks;
 
@@ -32,12 +35,10 @@ namespace DiscordBot
             {
                 Timeout =TimeSpan.FromMinutes(2) //commands that interact with read will timeout after 2 mins by default
             });
-
-
             Client.Ready += Client_Ready; //client_ready is added to client.ready class as a usable function.
             Client.MessageCreated += Client_MessageCreated;
-            
 
+            var slashCommandsConfiguration = Client.UseSlashCommands();
             var commandsConfig = new CommandsNextConfiguration()
             {
                 StringPrefixes = new string[] {jsonReader.prefix},
@@ -47,11 +48,33 @@ namespace DiscordBot
             };
             Commands = Client.UseCommandsNext(commandsConfig);
             Commands.RegisterCommands<TestCommands>();
+            Commands.CommandErrored += ErrorHandler;
+
 
             await Client.ConnectAsync();
             await Task.Delay(-1); //Delay-1 keeps the bot running indefinetly 
         }
 
+        private static async Task ErrorHandler(CommandsNextExtension sender, CommandErrorEventArgs e)
+        {
+                if(e.Exception is ChecksFailedException exception)
+            {
+                string timeLeft=string.Empty;
+
+                foreach(var check in exception.FailedChecks)
+                {
+                    var coolDown = (CooldownAttribute)check;
+                     timeLeft = coolDown.GetRemainingCooldown(e.Context).ToString(@"hh\:mm\:ss"); // gets teh remaining time before cooldown clears in hours\minutes\seconds format
+                }
+                var coolDownMessage = new DiscordEmbedBuilder
+                {
+                    Color = DiscordColor.Red,
+                    Title = "Please wait for the cooldown to end",
+                    Description = $"Remaining: {timeLeft}"
+                };
+                await e.Context.Channel.SendMessageAsync(embed: coolDownMessage);
+            }
+        }
 
         private static async Task Client_MessageCreated(DiscordClient sender, DSharpPlus.EventArgs.MessageCreateEventArgs e)
         {
