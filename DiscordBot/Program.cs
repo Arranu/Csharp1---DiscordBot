@@ -6,6 +6,8 @@ using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.CommandsNext.Exceptions;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
+using DSharpPlus.Lavalink;
+using DSharpPlus.Net;
 using DSharpPlus.SlashCommands;
 using System;
 using System.Threading.Tasks;
@@ -29,7 +31,7 @@ namespace DiscordBot
                 TokenType = TokenType.Bot, // specifies the token is for a bot entity
                 AutoReconnect = true, // will attempt to reconnect in the event of the bot crashing
             };
-
+            
             Client = new DiscordClient(discordConfig);
             Client.UseInteractivity(new DSharpPlus.Interactivity.InteractivityConfiguration()
             {
@@ -37,7 +39,19 @@ namespace DiscordBot
             });
             Client.Ready += Client_Ready; //client_ready is added to client.ready class as a usable function.
             Client.MessageCreated += Client_MessageCreated;
-
+            var lavalink = Client.UseLavalink();
+            var endpoint = new ConnectionEndpoint
+            {
+                Hostname = "127.0.0.1", // Localhost (***CHANGE LATER***)
+                Port = 2333             // Must match the port in application.yml
+            };
+            var lavalinkConfig = new LavalinkConfiguration
+            {
+                Password = "youshallnotpass", // Must match the password in application.yml
+                RestEndpoint = endpoint,
+                SocketEndpoint = endpoint
+            };
+            
             var slashCommandsConfiguration = Client.UseSlashCommands();
             var commandsConfig = new CommandsNextConfiguration()
             {
@@ -49,9 +63,10 @@ namespace DiscordBot
             Commands = Client.UseCommandsNext(commandsConfig);
             Commands.RegisterCommands<TestCommands>();
             Commands.CommandErrored += ErrorHandler;
-
+            
 
             await Client.ConnectAsync();
+            await lavalink.ConnectAsync(lavalinkConfig);
             await Task.Delay(-1); //Delay-1 keeps the bot running indefinetly 
         }
 
@@ -83,6 +98,7 @@ namespace DiscordBot
 
         private static Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs e)
         {
+            Console.WriteLine("Bot is connected!");
             return Task.CompletedTask; // resets the bot after a task has completed, making the client ready to take on a new task
         }
     }

@@ -3,6 +3,7 @@ using DSharpPlus.CommandsNext;
 using DSharpPlus.CommandsNext.Attributes;
 using DSharpPlus.Entities;
 using DSharpPlus.Interactivity.Extensions;
+using DSharpPlus.Lavalink;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,7 +68,7 @@ namespace DiscordBot.commands
             }
         }
         [Command("poll")]
-        [Cooldown(5,100,CooldownBucketType.Guild)] // after command is fired 5 times, cooldown of 100 seconds applied to all channels on the server (guild)
+        [Cooldown(5, 100, CooldownBucketType.Guild)] // after command is fired 5 times, cooldown of 100 seconds applied to all channels on the server (guild)
         public async Task Poll(CommandContext context, string option1, string option2, string option3, string option4, [RemainingText] string title)
         {
 
@@ -79,7 +80,7 @@ namespace DiscordBot.commands
                                         DiscordEmoji.FromName(Program.Client, ":four:")
             };
 
-            
+
 
             string[] options = { option1,
                                  option2,
@@ -98,11 +99,11 @@ namespace DiscordBot.commands
 
             var sentPoll = await context.Channel.SendMessageAsync(embed: pollMsg);
             foreach (var emoji in emojiList)
-            
-                {
-                    await sentPoll.CreateReactionAsync(emoji);
-                }
-                var finalTotal = await interact.CollectReactionsAsync(sentPoll, timeout);
+
+            {
+                await sentPoll.CreateReactionAsync(emoji);
+            }
+            var finalTotal = await interact.CollectReactionsAsync(sentPoll, timeout);
 
             int[] counts = new int[emojiList.Length];
 
@@ -122,6 +123,25 @@ namespace DiscordBot.commands
                 await context.Channel.SendMessageAsync($"{emojiList[i]}: {counts[i]} votes");
             }
 
+        }
+        [Command("play")]
+        [Cooldown(1, 10, CooldownBucketType.Guild)]
+        public async Task Play(CommandContext context, [RemainingText] string search)
+        {
+            var lava = context.Client.GetLavalink();
+            var node = lava.ConnectedNodes.Values.First();
+            var line = await node.ConnectAsync(context.Member.VoiceState.Channel);
+            var loaded = await node.Rest.GetTracksAsync(search);
+            if (loaded.LoadResultType == LavalinkLoadResultType.LoadFailed ||
+                loaded.LoadResultType == LavalinkLoadResultType.NoMatches)
+            {
+                await context.RespondAsync("Failed to find audio track.");
+                return;
+            }
+            var track = loaded.Tracks.First(); // payload takes the form of a list
+            await line.PlayAsync(track);
+
+            await context.RespondAsync($"Now playing: {track.Title}");
         }
     }
 }
