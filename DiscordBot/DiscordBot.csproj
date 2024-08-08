@@ -163,11 +163,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="commands\TestCommands.cs" />
+    <Compile Include="Commands\prefix\TestCommands.cs" />
     <Compile Include="config\JSONReader.cs" />
     <Compile Include="misc\CardSys.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Commands\slash\TestSlashCommands.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

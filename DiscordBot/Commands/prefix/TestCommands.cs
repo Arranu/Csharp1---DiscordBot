@@ -11,7 +11,7 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DiscordBot.commands
+namespace DiscordBot.Commands.prefix
 {
     public class TestCommands : BaseCommandModule // inherits base class structure
     {

@@ -1,4 +1,6 @@
-﻿using DiscordBot.commands;
+﻿
+using DiscordBot.Commands.prefix;
+using DiscordBot.Commands.slash;
 using DiscordBot.config;
 using DSharpPlus;
 using DSharpPlus.CommandsNext;
@@ -52,7 +54,7 @@ namespace DiscordBot
                 SocketEndpoint = endpoint
             };
             
-            var slashCommandsConfiguration = Client.UseSlashCommands();
+            
             var commandsConfig = new CommandsNextConfiguration()
             {
                 StringPrefixes = new string[] {jsonReader.prefix},
@@ -61,12 +63,15 @@ namespace DiscordBot
                 EnableDefaultHelp = false,
             };
             Commands = Client.UseCommandsNext(commandsConfig);
-            Commands.RegisterCommands<TestCommands>();
+            var slashCommandsConfig =Client.UseSlashCommands(); // enables use of slash commands
+
+            Commands.RegisterCommands<TestCommands>();  //prefix command register
+            slashCommandsConfig.RegisterCommands<TestSlashCommands>(); // slash command register
             Commands.CommandErrored += ErrorHandler;
             
 
             await Client.ConnectAsync();
-            await lavalink.ConnectAsync(lavalinkConfig);
+            //await lavalink.ConnectAsync(lavalinkConfig); - issue with lavalink connection, consult lavalink docs
             await Task.Delay(-1); //Delay-1 keeps the bot running indefinetly 
         }
 
