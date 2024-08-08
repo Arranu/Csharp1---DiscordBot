@@ -1,14 +1,28 @@
 ﻿server: # REST and WS server
-  port: 2333
+  port: 433
   address: 127.0.0.1
 spring:
   main:
     banner-mode: log
 lavalink:
+  plugins:
+    # Replace VERSION with the current version as shown by the Releases tab or a long commit hash for snapshots.
+    - dependency: "dev.lavalink.youtube:youtube-plugin:1.5.2"
+      snapshot: false
+      youtube:
+        enabled: true # Whether this source can be used.
+        allowSearch: true # Whether "ytsearch:" and "ytmsearch:" can be used.
+        allowDirectVideoIds: true # Whether just video IDs can match. If false, only complete URLs will be loaded.
+        allowDirectPlaylistIds: true # Whether just playlist IDs can match. If false, only complete URLs will be loaded.
+        clients:
+          - MUSIC
+          - ANDROID_TESTSUITE
+          - WEB
+          - TVHTML5EMBEDDED
   server:
     password: "youshallnotpass"
     sources:
-      youtube: true
+      youtube: false
       bandcamp: true
       soundcloud: true
       twitch: true
@@ -21,13 +35,6 @@ lavalink:
     youtubeSearchEnabled: true
     soundcloudSearchEnabled: true
     gc-warnings: true
-
-    logging:
-  file:
-    max-history: 30
-    max-size: 1GB
-  path: ./logs/
-
-  level:
-    root: INFO
-    lavalink: INFO
+  logging:
+    file:
+    enable: false

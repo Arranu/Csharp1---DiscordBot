@@ -19,6 +19,7 @@ namespace DiscordBot.Commands.prefix
         public async Task Speak(CommandContext context)// CommandContext accesses discord text
         {
             await context.Channel.SendMessageAsync($"Hello {context.User.Username}");
+
         }
         [Command("add")]
         public async Task Add(CommandContext context, int num1, int num2)
@@ -40,6 +41,7 @@ namespace DiscordBot.Commands.prefix
         [Command("cardgame")]
         public async Task CardGame(CommandContext context)
         {
+            
             var userCard = new CardSys();
             var userCardEmbed = new DiscordEmbedBuilder  //alternative way of declaring embed config
             {
@@ -74,7 +76,7 @@ namespace DiscordBot.Commands.prefix
 
             var interact = Program.Client.GetInteractivity();
             var timeout = TimeSpan.FromSeconds(10);
-            DiscordEmoji[] emojiList = { DiscordEmoji.FromName(Program.Client, ":one:"),
+            DiscordEmoji[] emojiList = {DiscordEmoji.FromName(Program.Client, ":one:"),
                                         DiscordEmoji.FromName(Program.Client, ":two:"),
                                         DiscordEmoji.FromName(Program.Client, ":three:"),
                                         DiscordEmoji.FromName(Program.Client, ":four:")

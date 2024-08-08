@@ -45,7 +45,7 @@ namespace DiscordBot
             var endpoint = new ConnectionEndpoint
             {
                 Hostname = "127.0.0.1", // Localhost (***CHANGE LATER***)
-                Port = 2333             // Must match the port in application.yml
+                Port = 433             // Must match the port in application.yml
             };
             var lavalinkConfig = new LavalinkConfiguration
             {
@@ -71,7 +71,7 @@ namespace DiscordBot
             
 
             await Client.ConnectAsync();
-            //await lavalink.ConnectAsync(lavalinkConfig); - issue with lavalink connection, consult lavalink docs
+            // await lavalink.ConnectAsync(lavalinkConfig); //- issue with lavalink connection, consult lavalink docs
             await Task.Delay(-1); //Delay-1 keeps the bot running indefinetly 
         }
 
